@@ -10,7 +10,6 @@ export default class ActivityStore{
     editMode= false;
     loading = false;
     loadingInitial = false;
-  
 
     constructor(){
         makeAutoObservable(this)
@@ -19,6 +18,16 @@ export default class ActivityStore{
     get ActivitiesByDate(){
         return Array.from(this.activityRegistry.values()).sort((a , b) =>
          Date.parse(a.date)- Date.parse(b.date));
+    }
+
+    get groupedActivities(){
+        return Object.entries(
+            this.ActivitiesByDate.reduce((activities, activity) => {
+                const date = activity.date;
+                activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+                return activities;
+            },{} as {[key: string] : Activity[]} )
+        )
     }
 
     loadActivities = async () => {
